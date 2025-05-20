@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Online Exam</title>
+  <style>
+    /* Basic styling for neat UI */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+      color: #333;
+    }
+    .container {
+      background: white;
+      max-width: 600px;
+      width: 100%;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 25px;
+      text-align: center;
+      color: #004aad;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 4px;
+      border: 1.8px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="email"]:focus {
+      border-color: #004aad;
+      outline: none;
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #004aad;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #00337a;
+    }
+    .question {
+      margin-top: 25px;
+    }
+    .options label {
+      display: block;
+      margin: 10px 0;
+      cursor: pointer;
+      padding: 8px 14px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    .options input[type="radio"] {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .options label:hover {
+      background: #e6f0ff;
+      border-color: #004aad;
+    }
+    #thank-you {
+      text-align: center;
+      color: #004aad;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="user-info">
+  <h2>Start Your Exam</h2>
+  <label for="name">Full Name</label>
+  <input type="text" id="name" placeholder="Enter your full name" required />
+  
+  <label for="email">Email Address</label>
+  <input type="email" id="email" placeholder="Enter your email address" required />
+  
+  <button id="start-btn">Start Exam</button>
+</div>
+
+<div class="container" id="exam-container" style="display:none;">
+  <h2>Exam Questions</h2>
+  <form id="exam-form">
+    <!-- Questions will be loaded here dynamically -->
+    <div id="questions-wrapper"></div>
+    <button type="submit">Submit Exam</button>
+  </form>
+</div>
+
+<div class="container" id="thank-you" style="display:none;">
+  <h2>Thank You!</h2>
+  <p>You have successfully completed the exam.<br />
+  You will receive an email shortly if you are eligible.</p>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHXlWn-HGEE_KUp6PdxlXzYo-YOJnh8L0",
+    authDomain: "idea-exchange-hub-f0cad.firebaseapp.com",
+    databaseURL: "https://idea-exchange-hub-f0cad-default-rtdb.firebaseio.com",
+    projectId: "idea-exchange-hub-f0cad",
+    storageBucket: "idea-exchange-hub-f0cad.appspot.com",
+    messagingSenderId: "653214321126",
+    appId: "1:653214321126:web:7e3af1635bb5695927ee27",
+    measurementId: "G-DSLQS99GWH"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const functions = firebase.functions();
+  const realtimeDB = firebase.database();
+
+  const userInfoDiv = document.getElementById('user-info');
+  const examContainer = document.getElementById('exam-container');
+  const thankYouDiv = document.getElementById('thank-you');
+  const startBtn = document.getElementById('start-btn');
+  const examForm = document.getElementById('exam-form');
+  const questionsWrapper = document.getElementById('questions-wrapper');
+
+  let userName = '';
+  let userEmail = '';
+  let questions = [];
+  let currentQuestionIndex = 0;
+  let userAnswers = [];
+
+  async function loadQuestions() {
+    const dbRef = realtimeDB.ref('questions');
+    try {
+      const snapshot = await dbRef.once('value');
+      const data = snapshot.val();
+      if (!data) {
+        alert('No questions found in the database.');
+        return;
+      }
+      const allQuestions = Object.values(data);
+      // Shuffle and take 20 questions
+      questions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 20);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      alert('Failed to load questions. Please try again later.');
+    }
+  }
+
+  function renderQuestion(index) {
+    const q = questions[index];
+    questionsWrapper.innerHTML = '';
+
+    const questionDiv = document.createElement('div');
+    questionDiv.classList.add('question');
+
+    let optionsHtml = '';
+    q.options.forEach((opt, i) => {
+      const optionId = `q${index}_opt${i}`;
+      optionsHtml += `
+        <label for="${optionId}">
+          <input type="radio" name="q${index}" id="${optionId}" value="${opt}" required /> ${opt}
+        </label>
+      `;
+    });
+
+    questionDiv.innerHTML = `
+      <label>${index + 1}. ${q.question}</label>
+      <div class="options">${optionsHtml}</div>
+    `;
+    questionsWrapper.appendChild(questionDiv);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.innerText = index === questions.length - 1 ? 'Submit Exam' : 'Next';
+    nextBtn.style.marginTop = '20px';
+    nextBtn.onclick = () => {
+      const selected = document.querySelector(`input[name="q${index}"]:checked`);
+      if (!selected) {
+        alert("Please select an option.");
+        return;
+      }
+      userAnswers[index] = selected.value;
+      if (index === questions.length - 1) {
+        submitExam();
+      } else {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+      }
+    };
+    questionsWrapper.appendChild(nextBtn);
+  }
+
+  async function submitExam() {
+    let score = 0;
+    questions.forEach((q, i) => {
+      if (userAnswers[i] === q.answer) score++;
+    });
+    const percentage = (score / questions.length) * 100;
+
+    try {
+      const docRef = await db.collection('users_results').add({
+        name: userName,
+        email: userEmail,
+        score: percentage,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      const sendEmail = functions.httpsCallable('sendEmailBasedOnScore');
+      await sendEmail({ userId: docRef.id, email: userEmail, score: percentage });
+
+      examContainer.style.display = 'none';
+      thankYouDiv.style.display = 'block';
+    } catch (error) {
+      console.error('Error saving results:', error);
+      alert('Something went wrong. Please try again later.');
+    }
+  }
+
+  // Prevent exit/refresh during exam
+  window.addEventListener('beforeunload', (e) => {
+    if (examContainer.style.display === 'block') {
+      e.preventDefault();
+      e.returnValue = 'Are you sure you want to leave? Your exam will be terminated.';
+    }
+  });
+
+  window.addEventListener('unload', () => {
+    if (examContainer.style.display === 'block') {
+      alert("Exam ended due to tab/window close.");
+      examContainer.style.display = 'none';
+    }
+  });
+
+  startBtn.addEventListener('click', async () => {
+    userName = document.getElementById('name').value.trim();
+    userEmail = document.getElementById('email').value.trim();
+
+    if (!userName || !userEmail) {
+      alert('Please enter both your name and email.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userEmail)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    try {
+      await loadQuestions();
+      if (questions.length === 0) {
+        alert('No questions found in the database.');
+        return;
+      }
+      userInfoDiv.style.display = 'none';
+      examContainer.style.display = 'block';
+      renderQuestion(currentQuestionIndex);
+    } catch (err) {
+      console.error('Error loading questions:', err);
+      alert('Failed to load questions. Please try again later.');
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+// Mongoose schema or Firebase structure for User

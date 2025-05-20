@@ -1,0 +1,1 @@
+This folder can contain test-related firebase logic

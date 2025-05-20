@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDEA X HUB</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #10b981;
+      --bg: linear-gradient(135deg, #e0f7fa, #fce4ec);
+      --text-dark: #1f2937;
+      --text-light: #ffffff;
+      --hover: #eeeef5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--primary);
+      color: var(--text-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-buttons button {
+      background-color: var(--secondary);
+      color: var(--text-light);
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .header-buttons button:hover {
+      background-color: var(--hover);
+      transform: scale(1.05);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--secondary);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem 1rem;
+    }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 6px 12px rgba(7, 19, 112, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(143, 61, 236, 0.445);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .card-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: #f1f9f2;
+      border-left: 5px solid var(--primary);
+      padding: 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background: var(--hover);
+      color: #1800ef;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card small {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .form input, .form textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .form input[type="file"] {
+      background: #f9fafb;
+    }
+
+    .form button {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form button:hover {
+      background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: var(--primary);
+      color: var(--text-light);
+      margin-top: 2rem;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background:  #00fff7;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 80%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(143, 61, 236, 0.7);
+    }
+
+    .popup h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .popup p {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .popup .close-btn {
+      margin-top: 1rem;
+      background-color: var(--secondary);
+      color: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .popup .close-btn:hover {
+      background-color: var(--hover);
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      nav a {
+        margin-left: 0;
+      }
+    }
+     /* ✅ SCROLLBAR FOR POSTED IDEAS SECTION */
+    #ideaList {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">IDEA <span style="color: var(--secondary)">X</span> HUB</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#projects">Projects</a>
+      <a href="#collab">Collaborations</a>
+      <a href="#ideas">Ideas</a>
+      <a href="#form">Share</a>
+    </nav>
+    <div class="header-buttons">
+      <button id="rewardsButton">Rewards</button>
+      <button id="logoutButton"><a href="https://ideas.salesforce.com" style="color: white; text-decoration: none;">Logout</a></button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="home">
+      <h2>Welcome to IDEA X HUB</h2>
+      <p>Where innovation meets collaboration — bring your ideas to life with a vibrant community of thinkers, makers, and creators.</p>
+    </section>
+
+    <section class="section" id="ideas">
+      <h2>Posted Ideas</h2>
+      <div class="card-list" id="ideaList"></div>
+    </section>
+
+    <section class="section" id="projects">
+      <h2>Projects</h2>
+      <div class="card-list">
+        <div class="card"><strong>IoT Smart Home</strong><br>Control devices remotely using sensors.</div>
+        <div class="card"><strong>AI Chatbot</strong><br>A bot to answer student queries 24/7.</div>
+        <div class="card"><strong>Health Monitor Band</strong><br>Wearable to track vitals with emergency alerts.</div>
+      </div>
+    </section>
+
+    <section class="section" id="collab">
+      <h2>Collaborations</h2>
+      <div class="card-list">
+        <div class="card"><strong>Looking for AI Developers</strong><br>To join our agriculture prediction system.</div>
+        <div class="card"><strong>Need UI Designers</strong><br>For a mental health tracking web app.</div>
+      </div>
+    </section>
+
+    <section class="section" id="form">
+      <h2>Share Your Idea</h2>
+      <form id="ideaForm" class="form">
+        <input type="text" id="username" placeholder="Your Name" required />
+        <input type="text" id="ideaTitle" placeholder="Idea Title" required />
+        <textarea id="ideaDesc" placeholder="Describe your idea" required></textarea>
+        <textarea id="problemStatement" placeholder="Problem Statement" required></textarea>
+        <input type="email" id="userEmail" placeholder="Your Email" required />
+        <input type="tel" id="userPhone" placeholder="Your Mobile Number" required />
+        <input type="file" id="ideaFile" />
+        <button type="submit">Submit Idea</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 IDEA X HUB. All rights reserved.
+  </footer>
+
+  <div class="popup" id="popup">
+    <h3>Idea Details</h3>
+    <p id="popupContent">Loading...</p>
+    <button class="close-btn" id="closePopupBtn">Close</button>
+  </div>
+
+  <script>
+    const predefinedIdeas = [
+      {
+        title: "Smart Agriculture",
+        desc: "Automate irrigation with sensors.",
+        problem: "Water wastage in farming.",
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "123-456-7890",
+        file: "https://www.w3schools.com/w3images/forest.jpg"
+      },
+      {
+        title: "AI for Healthcare",
+        desc: "AI to predict patient conditions.",
+        problem: "Delayed medical diagnostics.",
+        name: "Jane Smith",
+        email: "jane@example.com",
+        phone: "098-765-4321",
+        file: "https://media.licdn.com/dms/image/v2/C5612AQGamNcIsRgNlw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1533622768276?e=2147483647&v=beta&t=ORej-BH_L1d3yEI1XjLahTl5yQbACqdvbi1RKZsTcVs"
+      },
+      {
+        title: "Sustainable Energy",
+        desc: "Solar energy solutions for rural areas.",
+        problem: "Energy shortages in remote areas.",
+        name: "Alex Johnson",
+        email: "alex@example.com",
+        phone: "456-123-7890",
+        file: "https://www.w3schools.com/w3images/mountains.jpg"
+      }
+    ];
+
+    const ideaList = document.getElementById("ideaList");
+
+    function displayIdea(idea) {
+      const ideaCard = document.createElement("div");
+      ideaCard.classList.add("card");
+
+      ideaCard.innerHTML = `
+        <img src="${idea.file}" alt="Image" style="width: 100%; height: auto; border-radius: 8px;" />
+        <h3>${idea.title}</h3>
+        <p>${idea.desc}</p>
+        <small>Posted by: ${idea.name}</small>
+        <small>Email: ${idea.email}</small>
+        <small>Phone: ${idea.phone}</small>
+      `;
+
+      ideaCard.addEventListener("click", () => showPopup(idea));
+      ideaList.appendChild(ideaCard);
+    }
+
+    function showPopup(idea) {
+      const popup = document.getElementById("popup");
+      const content = document.getElementById("popupContent");
+
+      content.innerHTML = `
+        <strong>Idea Title:</strong> ${idea.title}<br>
+        <strong>Description:</strong> ${idea.desc}<br>
+        <strong>Problem:</strong> ${idea.problem}<br>
+        <strong>Posted by:</strong> ${idea.name}<br>
+        <strong>Email:</strong> ${idea.email}<br>
+        <strong>Phone:</strong> ${idea.phone}
+      `;
+
+      popup.classList.add("active");
+    }
+
+    document.getElementById("closePopupBtn").addEventListener("click", () => {
+      document.getElementById("popup").classList.remove("active");
+    });
+
+    document.getElementById("ideaForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("ideaTitle").value;
+      const desc = document.getElementById("ideaDesc").value;
+      const problem = document.getElementById("problemStatement").value;
+      const name = document.getElementById("username").value;
+      const email = document.getElementById("userEmail").value;
+      const phone = document.getElementById("userPhone").value;
+      const file = document.getElementById("ideaFile").files[0];
+
+      const newIdea = {
+        title,
+        desc,
+        problem,
+        name,
+        email,
+        phone,
+        file: file ? URL.createObjectURL(file) : null
+      };
+
+      predefinedIdeas.push(newIdea);
+      displayIdea(newIdea);
+
+      document.getElementById("ideaForm").reset(); // Clear form after submission
+    });
+
+    predefinedIdeas.forEach(idea => displayIdea(idea));
+  </script>
+</body>
+</html>

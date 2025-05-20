@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Idea exchange Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      --heading-font: "Raleway", sans-serif;
+      --nav-font: "Poppins", sans-serif;
+
+      --background-color: #ffffff;
+      --default-color: #212529;
+      --heading-color: #065b5e;
+      --accent-color: #1dc8cd;
+      --surface-color: #ffffff;
+      --contrast-color: #ffffff;
+
+      --nav-color: rgba(255, 255, 255, 0.6);
+      --nav-hover-color: #ffffff;
+      --nav-mobile-background-color: #ffffff;
+      --nav-dropdown-background-color: #ffffff;
+      --nav-dropdown-color: #212529;
+      --nav-dropdown-hover-color: #1dc8cd;
+
+      scroll-behavior: smooth;
+    }
+
+    body {
+      color: var(--default-color);
+      background-color: var(--background-color);
+      font-family: var(--default-font);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+      /* Prevent horizontal scroll */
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: color-mix(in srgb, var(--accent-color), transparent 25%);
+      text-decoration: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--heading-color);
+      font-family: var(--heading-font);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.5em;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Layout Styles */
+    .container {
+      width: 85%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    /* Header Styles */
+    .header {
+      color: var(--default-color);
+      background-color: var(--background-color);
+      padding: 15px 0;
+      transition: all 0.5s;
+      z-index: 997;
+      position: fixed;
+      /* Fixed header */
+      top: 0;
+      left: 0;
+      width: 100%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header .logo {
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .header .logo img {
+      max-height: 32px;
+      margin-right: 8px;
+    }
+
+    .header .logo h1 {
+      font-size: 30px;
+      margin: 0;
+      font-weight: 400;
+      text-transform: uppercase;
+      color: var(--heading-color);
+    }
+
+    /* Navigation Menu */
+    .navmenu ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      list-style: none;
+      align-items: center;
+    }
+
+    .navmenu li {
+      position: relative;
+    }
+
+    .navmenu a,
+    .navmenu a:focus {
+      color: var(--nav-color);
+      padding: 18px 15px;
+      font-size: 16px;
+      font-family: var(--nav-font);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .navmenu a i,
+    .navmenu a:focus i {
+      font-size: 12px;
+      line-height: 0;
+      margin-left: 5px;
+      transition: 0.3s;
+    }
+
+    .navmenu li:hover>a,
+    .navmenu .active,
+    .navmenu .active:focus {
+      color: var(--nav-hover-color);
+    }
+
+    .navmenu .dropdown ul {
+      margin: 0;
+      padding: 10px 0;
+      background: var(--nav-dropdown-background-color);
+      display: block;
+      position: absolute;
+      visibility: hidden;
+      left: 14px;
+      top: 130%;
+      opacity: 0;
+      transition: 0.3s;
+      border-radius: 4px;
+      z-index: 99;
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .navmenu .dropdown ul li {
+      min-width: 200px;
+    }
+
+    .navmenu .dropdown ul a {
+      padding: 10px 20px;
+      font-size: 15px;
+      text-transform: none;
+      color: var(--nav-dropdown-color);
+    }
+
+    .navmenu .dropdown ul a i {
+      font-size: 12px;
+    }
+
+    .navmenu .dropdown ul a:hover,
+    .navmenu .dropdown ul .active:hover,
+    .navmenu .dropdown ul li:hover>a {
+      color: var(--nav-dropdown-hover-color);
+    }
+
+    .navmenu .dropdown:hover>ul {
+      opacity: 1;
+      top: 100%;
+      visibility: visible;
+    }
+
+    /* Hero Section */
+    .hero {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(0deg, var(--background-color) 0%, color-mix(in srgb, var(--background-color) 90%, white 10%) 100%);
+      padding: 150px 0 100px;
+      /* Adjusted padding to accommodate fixed header */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      margin-bottom: 30px;
+      font-size: 3.5em;
+      font-weight: 700;
+      color: var(--heading-color);
+      animation: slideInLeft 1s ease-out;
+    }
+
+    .hero p {
+      max-width: 80%;
+      margin: 0 auto 30px auto;
+      font-size: 1.2em;
+      color: var(--default-color);
+      animation: slideInRight 1s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .hero .cta-button {
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 1px;
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 50px;
+      transition: all 0.5s;
+      line-height: 1;
+      margin: 10px;
+      color: var(--default-color);
+      border: 2px solid var(--accent-color);
+      text-decoration: none;
+      background-color: transparent;
+      animation: pulse 2s infinite alternate;
+    }
+
+    .hero .cta-button:hover {
+      background: var(--accent-color);
+      color: var(--contrast-color);
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Section Titles */
+    .section-title {
+      text-align: center;
+      padding: 60px 0;
+      position: relative;
+    }
+
+    .section-title h2 {
+      font-size: 2.5em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      position: relative;
+      color: var(--heading-color);
+    }
+
+    .section-title h2:after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: var(--accent-color);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 80px 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-item {
+      padding: 20px;
+      background-color: var(--surface-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-item h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: var(--heading-color);
+    }
+
+    .feature-item p {
+      color: var(--default-color);
+    }
+
+    /* Solved Problems Section */
+    .solved-problems {
+      padding: 80px 0;
+      background-color: #f9f9f9;
+    }
+
+    .solved-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .solved-item {
+      padding: 20px;
+      background-color: var(--surface-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .solved-item:hover {
+      transform: scale(1.03);
+    }
+
+    .solved-item h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: var(--heading-color);
+    }
+
+    .solved-item p {
+      color: var(--default-color);
+    }
+
+    /* Submit Problem Section */
+    .submit-problem {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .submit-problem p {
+      font-size: 1.2em;
+      max-width: 70%;
+      margin: 0 auto 20px;
+      color: var(--default-color);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: var(--surface-color);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 8px;
+      position: relative;
+      animation: slideInDown 0.5s ease-out;
+    }
+
+    @keyframes slideInDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--default-color);
+    }
+
+    /* Form Styles */
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--heading-color);
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    /* Rewards Section */
+    .rewards {
+      padding: 80px 0;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    .rewards p {
+      font-size: 1.2em;
+      max-width: 70%;
+      margin: 0 auto 20px;
+      color: var(--default-color);
+    }
+
+    /* Footer */
+    .footer {
+      color: var(--default-color);
+      background-color: var(--background-color);
+      font-size: 14px;
+      text-align: center;
+      padding: 30px 0;
+      position: relative;
+    }
+
+    /* Utility Classes */
+    .cta-button {
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 1px;
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 50px;
+      transition: all 0.5s;
+      line-height: 1;
+      margin: 10px;
+      color: var(--default-color);
+      border: 2px solid var(--accent-color);
+      text-decoration: none;
+      background-color: transparent;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-color);
+      color: var(--contrast-color);
+    }
+
+    .highlight {
+      color: var(--accent-color);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5em;
+      }
+
+      .hero p {
+        font-size: 1em;
+        max-width: 90%;
+      }
+
+      .section-title h2 {
+        font-size: 2em;
+      }
+
+      .container {
+        width: 95%;
+        padding: 0 10px;
+      }
+
+      .feature-grid,
+      .solved-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Scrolling Section */
+    .scrolling-container {
+      background-color: #f0f0f0;
+      padding: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .scrolling-content {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollText 15s linear infinite;
+    }
+
+    @keyframes scrollText {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo-container">
+        <img src="web page\images\index_img.jpg" alt="Idea Exchange Hub" class="logo">
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="login.html" class="nav-link">Sign In</a>
+        <a href="exam.html" class="nav-link">Take Test</a>
+        <a href="rewards.html" class="nav-link">Rewards</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-overlay">
+        <div class="container">
+          <h1>Welcome to <span class="highlight">Idea Exchange Hub</span></h1>
+          <p>Collaborate, solve problems, and earn rewards!</p>
+          <a href="exam.html" class="cta-button">Start Solving Problems</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>Our Features</h2>
+        <div class="feature-grid">
+          <div class="feature-item">
+            <h3>Problem Solving</h3>
+            <p>Get rewarded for solving interesting challenges posted by others.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Submit Problems</h3>
+            <p>Contribute by submitting your own problems for others to solve.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Earn Rewards</h3>
+            <p>Earn points for your contributions and redeem them for prizes.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Community Discussions</h3>
+            <p>Engage in insightful discussions and exchange ideas with peers.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Leaderboard</h3>
+            <p>Compete with others and climb the leaderboard rankings.</p>
+          </div>
+          <div class="feature-item">
+            <h3>AI Assistance</h3>
+            <p>Get AI-powered hints and explanations to improve your learning.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="solved-problems">
+      <div class="container">
+        <h2>Recent Solved Problems</h2>
+        <div class="solved-grid">
+          <div class="solved-item">
+            <h3>Problem 1: Solve the Equation</h3>
+            <p>A complex math equation solved by multiple users using innovative strategies.</p>
+          </div>
+          <div class="solved-item">
+            <h3>Problem 2: Code Optimization</h3>
+            <p>A programming challenge focused on making code run faster and more efficiently.</p>
+          </div>
+          <div class="solved-item">
+            <h3>Problem 3: Creative Design Idea</h3>
+            <p>Users suggested innovative solutions for a new app interface.</p>
+          </div>
+        </div>
+        <a href="solve.html" class="cta-button">Solve More Problems</a>
+      </div>
+    </section>
+
+    <section class="submit-problem">
+      <div class="container">
+        <h2>Submit Your Problem</h2>
+        <p>Have an interesting problem? Submit it here and challenge others to solve it!</p>
+        <button class="cta-button" id="open-modal">Submit Problem</button>
+      </div>
+    </section>
+
+    <!-- Modal Structure -->
+    <div id="problem-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" id="close-modal">&times;</span>
+        <h2>Submit Your Problem</h2>
+        <form action="submit_problem.php" method="post">
+          <label for="problem-title">Problem Title:</label>
+          <input type="text" id="problem-title" name="problem-title" required>
+
+          <label for="problem-description">Problem Description:</label>
+          <textarea id="problem-description" name="problem-description" rows="5" required></textarea>
+
+          <button type="submit" class="cta-button">Submit Problem</button>
+        </form>
+      </div>
+    </div>
+
+    <section class="rewards">
+      <div class="container">
+        <h2>Earn Rewards!</h2>
+        <p>Earn points by solving and submitting problems. The more you contribute, the more rewards you get!</p>
+        <a href="rewards.html" class="cta-button">Check Rewards</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Idea Exchange Hub | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simulated user state
+    const user = {
+      isLoggedIn: false, // change to true after login
+      hasPassedTest: false // change to true after test
+    };
+
+    // Handle reward access
+    document.querySelectorAll('a[href="rewards.html"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (!user.isLoggedIn) {
+          e.preventDefault();
+          alert("Please log in to view your rewards.");
+          window.location.href = "login.html";
+        }
+      });
+    });
+
+    // Handle submit problem access
+    document.getElementById("open-modal").addEventListener('click', function(e) {
+      if (!user.hasPassedTest) {
+        alert("You must complete the test before submitting problems.");
+        window.location.href = "exam.html";
+      } else {
+        document.getElementById("problem-modal").style.display = "block";
+      }
+    });
+
+    // Close modal logic
+    document.getElementById("close-modal").onclick = function() {
+      document.getElementById("problem-modal").style.display = "none";
+    };
+  </script>
+</body>
+
+</html>
